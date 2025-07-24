@@ -1,11 +1,12 @@
-import React from "react";
 import AttitudeIndicator from "./AttitudeIndicator/AttitudeIndicator";
 import AirspeedIndicator from "./AirspeedIndicator/AirspeedIndicator";
 import AltitudeIndicator from "./AltitudeIndicator/AltitudeIndicator";
 import HeadingIndicator from "./HeadingIndicator/HeadingIndicator";
 import VerticalSpeedIndicator from "./VerticalSpeedIndicator/VerticalSpeedIndicator";
 
-function FlightDisplay({ flightData }) {
+import { FlightData } from "../types/flight";
+
+function FlightDisplay({ flightData }: { flightData: FlightData }) {
   return (
     <>
       {/* Main Flight Display */}

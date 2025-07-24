@@ -1,4 +1,4 @@
-const AttitudeIndicator = ({ pitch, roll }) => {
+const AttitudeIndicator = ({ pitch, roll }: { pitch: number; roll: number }) => {
   return (
     <div className="relative w-48 h-48 bg-gradient-to-b from-blue-400 to-amber-600 rounded-full overflow-hidden border-4 border-white shadow-2xl">
       {/* Artificial Horizon */}

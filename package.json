@@ -1,7 +1,16 @@
 {
   "name": "a429-flight-display",
   "version": "1.0.0",
-  "description": "ARINC 429 Flight Display Component",
+  "description": "React components for ARINC 429 Flight Display with primary flight instruments",
+  "keywords": [
+    "react",
+    "arinc429",
+    "flight",
+    "display",
+    "aviation",
+    "instruments",
+    "pfd"
+  ],
   "homepage": "https://github.com/dashboard-system/a429-Flight-Display#readme",
   "bugs": {
     "url": "https://github.com/dashboard-system/a429-Flight-Display/issues"
@@ -13,15 +22,31 @@
   "license": "ISC",
   "author": "Haorong Li",
   "type": "module",
-  "main": "src/main.tsx",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./style.css": "./dist/style.css"
+  },
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
+    "build": "tsc && vite build",
+    "build:lib": "vite build --config vite.config.lib.ts",
+    "preview": "vite preview",
+    "prepublishOnly": "npm run build:lib"
   },
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -29,8 +54,11 @@
     "@vitejs/plugin-react": "^4.2.1",
     "autoprefixer": "^10.4.16",
     "postcss": "^8.4.32",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "tailwindcss": "^3.3.6",
     "typescript": "^5.2.2",
-    "vite": "^5.0.8"
+    "vite": "^5.0.8",
+    "vite-plugin-dts": "^3.9.1"
   }
 }
