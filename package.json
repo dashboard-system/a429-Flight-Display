@@ -1,0 +1,36 @@
+{
+  "name": "a429-flight-display",
+  "version": "1.0.0",
+  "description": "ARINC 429 Flight Display Component",
+  "homepage": "https://github.com/dashboard-system/a429-Flight-Display#readme",
+  "bugs": {
+    "url": "https://github.com/dashboard-system/a429-Flight-Display/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dashboard-system/a429-Flight-Display.git"
+  },
+  "license": "ISC",
+  "author": "Haorong Li",
+  "type": "module",
+  "main": "src/main.tsx",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.43",
+    "@types/react-dom": "^18.2.17",
+    "@vitejs/plugin-react": "^4.2.1",
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6",
+    "typescript": "^5.2.2",
+    "vite": "^5.0.8"
+  }
+}
