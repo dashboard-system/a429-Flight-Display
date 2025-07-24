@@ -1,9 +1,9 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import dts from 'vite-plugin-dts'
-import { resolve } from 'path'
-import { fileURLToPath } from 'url'
-import { dirname } from 'path'
+import { resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { dirname } from 'node:path'
 import tailwindcss from 'tailwindcss'
 import autoprefixer from 'autoprefixer'
 
@@ -12,7 +12,9 @@ const __dirname = dirname(__filename)
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      jsxRuntime: 'automatic',
+    }),
     dts({
       insertTypesEntry: true,
     }),
@@ -25,11 +27,12 @@ export default defineConfig({
       fileName: (format) => `index.${format === 'es' ? 'es.js' : 'js'}`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ['react', 'react-dom', 'react/jsx-runtime'],
       output: {
         globals: {
           react: 'React',
           'react-dom': 'ReactDOM',
+          'react/jsx-runtime': 'React',
         },
       },
     },
