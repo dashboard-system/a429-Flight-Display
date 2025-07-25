@@ -1,28 +1,57 @@
 import React from 'react';
+import VerticalTape from '../shared/VerticalTape';
 
 interface AltitudeIndicatorProps {
   altitude: number;
 }
 
 const AltitudeIndicator: React.FC<AltitudeIndicatorProps> = ({ altitude }) => {
-  const altitudes = [34000, 34500, 35000, 35500, 36000, 36500, 37000];
+  // Generate altitude marks around current altitude
+  const generateAltitudeMarks = (currentAltitude: number) => {
+    const marks = [];
+    const range = 5000; // Show 5000 feet above and below current altitude to fill the box
+    const increment = 100; // 100 feet increments
+    
+    const startAltitude = Math.max(
+      0,
+      Math.floor((currentAltitude - range) / increment) * increment
+    );
+    const endAltitude = Math.ceil((currentAltitude + range) / increment) * increment;
+    
+    for (let alt = startAltitude; alt <= endAltitude; alt += increment) {
+      marks.push(alt);
+    }
+    return marks;
+  };
+
+  const getAltitudeColor = (altitude: number) => {
+    if (altitude < 1000) return 'text-red-400'; // Low altitude warning
+    if (altitude >= 1000 && altitude <= 10000) return 'text-white'; // Low to medium altitude
+    if (altitude > 10000 && altitude <= 40000) return 'text-green-400'; // Normal cruise altitude
+    if (altitude > 40000) return 'text-yellow-400'; // High altitude
+    return 'text-gray-400';
+  };
+
+  const isMajorTick = (altitude: number) => altitude % 500 === 0;
+
+  const formatAltitude = (altitude: number) => {
+    // Display full altitude values (e.g., 36000, 35500, 35000)
+    return altitude.toString();
+  };
+
   return (
-    <div className="bg-gray-900 text-white p-4 rounded-lg w-24 h-48 relative overflow-hidden border-2 border-gray-600">
-      <div className="absolute left-2 top-1/2 w-0 h-0 border-t-4 border-b-4 border-r-8 border-transparent border-r-yellow-400 transform -translate-y-1/2"></div>
-      <div 
-        className="absolute left-8 transition-transform duration-300"
-        style={{ transform: `translateY(${120 - (altitude - 35000) * 0.24}px)` }}
-      >
-        {altitudes.map(alt => (
-          <div key={alt} className="h-6 flex items-center text-xs font-mono">
-            {(alt / 1000).toFixed(0)}
-          </div>
-        ))}
-      </div>
-      <div className="absolute top-1/2 left-12 bg-black px-2 py-1 border border-white text-cyan-400 font-bold text-sm transform -translate-y-1/2">
-        {Math.round(altitude)}
-      </div>
-    </div>
+    <VerticalTape
+      value={altitude}
+      title="ALTITUDE"
+      unit="FT"
+      unitTooltip="Feet above sea level"
+      generateMarks={generateAltitudeMarks}
+      getValueColor={getAltitudeColor}
+      isMajorTick={isMajorTick}
+      formatValue={formatAltitude}
+      pixelsPerUnit={0.1} // 0.1 pixels per foot for appropriate scaling
+      pointerSide="left"
+    />
   );
 };
 

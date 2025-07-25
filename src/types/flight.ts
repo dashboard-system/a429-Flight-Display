@@ -7,4 +7,5 @@ export interface FlightData {
   pitch: number;
   roll: number;
   temperature: number;
+  timestamp: Date;
 }

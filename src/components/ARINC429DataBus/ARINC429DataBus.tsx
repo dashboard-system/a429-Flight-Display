@@ -21,7 +21,12 @@ const ARINC429DataBus: React.FC<ARINC429DataBusProps> = ({ flightData }) => {
 
   return (
     <div className="bg-gray-900 rounded-xl p-6 shadow-2xl">
-      <h2 className="text-xl font-bold text-white mb-4">Live ARINC 429 Data Bus</h2>
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold text-white">Live ARINC 429 Data Bus</h2>
+        <div className="text-green-400 font-mono text-sm">
+          {flightData.timestamp.toLocaleTimeString()}
+        </div>
+      </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {generateARINC429Words().map((word, index) => {
           const labelName = Object.keys(ARINC429_LABELS).find(
