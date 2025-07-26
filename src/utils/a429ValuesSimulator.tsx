@@ -72,153 +72,30 @@ export const useA429ValuesSimulator = (initialData: FlightData) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFlightData((prev) => {
-        const now = new Date();
-        
-        // Enhanced flight phase detection for in-flight operations
-        let phase: FlightData['flight_phase'] = prev.flight_phase;
-        
-        if (prev.altitude < 1000) {
-          if (prev.groundspeed < 50) phase = 'GROUND';
-          else if (prev.vertical_speed > 500) phase = 'TAKEOFF';
-          else if (prev.vertical_speed < -500) phase = 'LANDING';
-          else phase = 'APPROACH';
-        } else if (prev.altitude < 10000) {
-          if (prev.vertical_speed > 1000) phase = 'CLIMB';
-          else if (prev.vertical_speed < -1000) phase = 'DESCENT';
-          else phase = 'CRUISE';
-        } else if (prev.altitude > 30000) {
-          // High altitude operations
-          if (prev.vertical_speed > 500) phase = 'CLIMB';
-          else if (prev.vertical_speed < -500) phase = 'DESCENT';
-          else phase = 'CRUISE';
-        } else {
-          // Medium altitude
-          if (prev.vertical_speed > 800) phase = 'CLIMB';
-          else if (prev.vertical_speed < -800) phase = 'DESCENT';
-          else phase = 'CRUISE';
-        }
-
-        // Calculate realistic parameter relationships
-        const machFromAirspeed = prev.airspeed / (661.5 * Math.sqrt(288.15 / (prev.static_air_temperature + 273.15)));
-        
-        // Realistic flight dynamics based on phase - optimized for cruise
-        const getPhaseMultipliers = (phase: string) => {
-          switch (phase) {
-            case 'TAKEOFF':
-              return { altitudeRate: 2500, speedChange: 15, powerSetting: 0.95, stabilityFactor: 0.3 };
-            case 'CLIMB':
-              return { altitudeRate: 1500, speedChange: 5, powerSetting: 0.82, stabilityFactor: 0.7 };
-            case 'CRUISE':
-              return { altitudeRate: 25, speedChange: 1.5, powerSetting: 0.78, stabilityFactor: 0.95 };
-            case 'DESCENT':
-              return { altitudeRate: -1000, speedChange: 4, powerSetting: 0.45, stabilityFactor: 0.8 };
-            case 'APPROACH':
-              return { altitudeRate: -600, speedChange: 6, powerSetting: 0.55, stabilityFactor: 0.6 };
-            case 'LANDING':
-              return { altitudeRate: -200, speedChange: 8, powerSetting: 0.35, stabilityFactor: 0.4 };
-            default:
-              return { altitudeRate: 0, speedChange: 1, powerSetting: 0.25, stabilityFactor: 0.9 };
-          }
-        };
-
-        const phaseParams = getPhaseMultipliers(phase);
-        
-        // Environmental correlations with cruise flight turbulence
-        const turbulenceIntensity = phase === 'CRUISE' ? 0.3 : 1.0;
-        const windVariation = (Math.random() - 0.5) * 1.5 * turbulenceIntensity;
-        const tempVariation = (Math.random() - 0.5) * 0.5;
-    
-        // Engine parameter correlations (optimized for cruise stability)
-        const targetN1 = phaseParams.powerSetting * 100;
-        const n1Change = (targetN1 - prev.n1_rpm) * 0.02 + (Math.random() - 0.5) * 0.3 * turbulenceIntensity;
-        const newN1 = Math.max(20, Math.min(100, prev.n1_rpm + n1Change));
-        const newN2 = Math.max(30, Math.min(105, newN1 * 1.18 + (Math.random() - 0.5) * 0.8));
-        
-        // EGT correlates with N1/N2 and altitude (cruise optimized)
-        const baseEGT = 300 + (newN1 / 100) * 350 - (prev.altitude / 1000) * 6;
-        const newEGT = Math.max(200, Math.min(950, baseEGT + (Math.random() - 0.5) * 8));
-        
-        // Fuel flow correlates with N1 and altitude (cruise efficiency)
-        const altitudeFactor = Math.max(0.6, 1 - prev.altitude / 120000);
-        const baseFuelFlow = (newN1 / 100) * 2200 * altitudeFactor;
-        const newFuelFlow = Math.max(300, baseFuelFlow + (Math.random() - 0.5) * 40);
-
-
-        return {
-          // Primary Flight Data with realistic constraints
-          airspeed: Math.max(0, Math.min(400, 
-            prev.airspeed + (Math.random() - 0.5) * phaseParams.speedChange)),
-          altitude: Math.max(0, prev.altitude + prev.vertical_speed / 60 + (Math.random() - 0.5) * 20),
-          groundspeed: Math.max(0, prev.airspeed + prev.wind_speed * Math.cos((prev.wind_direction - prev.true_heading) * Math.PI / 180)),
-          mach: Math.max(0, Math.min(0.95, machFromAirspeed + (Math.random() - 0.5) * 0.01)),
-          
-          // Attitude with realistic flight envelope limits
-          pitch_angle: Math.max(-20, Math.min(25, 
-            prev.pitch_angle + prev.pitch_rate * 0.02 + (Math.random() - 0.5) * 0.5)),
-          roll_angle: Math.max(-45, Math.min(45, 
-            prev.roll_angle + prev.roll_rate * 0.02 + (Math.random() - 0.5) * 0.8)),
-          true_heading: (prev.true_heading + prev.true_heading_rate * 0.02 + (Math.random() - 0.5) * 0.3 + 360) % 360,
-          magnetic_heading: (prev.true_heading - 8.5 + 360) % 360, // Magnetic variation
-          
-          // Flight Dynamics
-          pitch_rate: Math.max(-10, Math.min(10, (Math.random() - 0.5) * 2)),
-          roll_rate: Math.max(-15, Math.min(15, (Math.random() - 0.5) * 3)),
-          true_heading_rate: Math.max(-5, Math.min(5, (Math.random() - 0.5) * 1)),
-          vertical_speed: Math.max(-4000, Math.min(4000, 
-            phaseParams.altitudeRate + (Math.random() - 0.5) * 300)),
-          true_track_angle: (prev.true_heading + (Math.random() - 0.5) * 2 + 360) % 360,
-          
-          // Accelerations (realistic g-force ranges)
-          body_lateral_accel: Math.max(-2, Math.min(2, prev.roll_angle * 0.02 + (Math.random() - 0.5) * 0.1)),
-          body_long_accel: Math.max(-1, Math.min(1, (newN1 - prev.n1_rpm) * 0.01 + (Math.random() - 0.5) * 0.05)),
-          body_normal_accel: Math.max(-1, Math.min(3, 1 + prev.pitch_angle * 0.015 + (Math.random() - 0.5) * 0.08)),
-          
-          // Navigation (realistic cruise navigation with small drift)
-          latitude: prev.latitude + (prev.groundspeed * Math.cos(prev.true_track_angle * Math.PI / 180)) / 364000 * 0.9,
-          longitude: prev.longitude + (prev.groundspeed * Math.sin(prev.true_track_angle * Math.PI / 180)) / (364000 * Math.cos(prev.latitude * Math.PI / 180)) * 0.9,
-          
-          // Environmental Data (high altitude conditions)
-          total_air_temperature: Math.max(-70, Math.min(50, 
-            15 - (prev.altitude / 1000) * 2 + tempVariation)),
-          static_air_temperature: Math.max(-70, Math.min(50, 
-            15 - (prev.altitude / 1000) * 2 + tempVariation - 2)),
-          wind_speed: Math.max(0, Math.min(150, prev.wind_speed + windVariation)),
-          wind_direction: (prev.wind_direction + (Math.random() - 0.5) * 2 + 360) % 360,
-          static_pressure: Math.max(100, 1013.25 * Math.pow((1 - 0.0065 * prev.altitude / 288.15), 5.255)),
-          
-          // Engine Parameters (realistic turbofan correlations)
-          n1_rpm: newN1,
-          n2_rpm: newN2,
-          egt: newEGT,
-          fuel_flow: newFuelFlow,
-          oil_pressure: Math.max(20, Math.min(100, 45 + (newN1 / 100) * 35 + (Math.random() - 0.5) * 3)),
-          oil_temperature: Math.max(-40, Math.min(150, 60 + (newN1 / 100) * 40 + (Math.random() - 0.5) * 5)),
-          
-          // Aircraft Configuration (cruise configuration)
-          flap_position: phase === 'TAKEOFF' || phase === 'APPROACH' || phase === 'LANDING' ? 
-            Math.max(0, Math.min(40, 20 + (Math.random() - 0.5) * 3)) : 0,
-          gear_position: prev.altitude < 2500 && (phase === 'TAKEOFF' || phase === 'APPROACH' || phase === 'LANDING' || phase === 'GROUND'),
-          
-          // System Status (pressurized cruise cabin)
-          cabin_altitude: Math.min(8000, Math.max(0, prev.altitude * 0.2 + 6000 + (Math.random() - 0.5) * 50)),
-          cabin_pressure_diff: Math.max(0, Math.min(9.5, (prev.altitude - 6000) / 5000 * 8 + (Math.random() - 0.5) * 0.05)),
-          
-          // Navigation Aids (simulate approach scenario)
-          ils_deviation: phase === 'APPROACH' ? (Math.random() - 0.5) * 1.5 : 0,
-          glideslope_deviation: phase === 'APPROACH' ? (Math.random() - 0.5) * 1.2 : 0,
-          dme_distance: Math.max(0, prev.dme_distance - prev.groundspeed / 3600 + (Math.random() - 0.5) * 0.1),
-          
-          // Time & Date
-          date: now.toLocaleDateString('en-GB'),
-          time: now.toTimeString().split(' ')[0],
-          timestamp: now,
-          
-          // Flight Phase
-          flight_phase: phase,
-        };
-      });
-    }, 1000); // Update at 1 Hz (can be increased for higher fidelity)
+      setFlightData((prev) => ({
+        altitude: prev.altitude + (Math.random() - 0.5) * 100,
+        airspeed: Math.max(
+          180,
+          Math.min(300, prev.airspeed + (Math.random() - 0.5) * 10)
+        ),
+        mach: Math.max(
+          0.5,
+          Math.min(0.9, prev.mach + (Math.random() - 0.5) * 0.02)
+        ),
+        heading: (prev.heading + (Math.random() - 0.5) * 5 + 360) % 360,
+        verticalSpeed: prev.verticalSpeed + (Math.random() - 0.5) * 200,
+        pitch: Math.max(
+          -15,
+          Math.min(15, prev.pitch + (Math.random() - 0.5) * 2)
+        ),
+        roll: Math.max(
+          -30,
+          Math.min(30, prev.roll + (Math.random() - 0.5) * 2)
+        ),
+        temperature: prev.temperature + (Math.random() - 0.5) * 2,
+        timestamp: new Date(),
+      }));
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
