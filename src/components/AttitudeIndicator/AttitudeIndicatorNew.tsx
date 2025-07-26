@@ -1,4 +1,5 @@
 import React from 'react';
+import { JSX } from 'react/jsx-runtime';
 
 interface AttitudeIndicatorProps {
   pitch: number;
@@ -50,7 +51,7 @@ const AttitudeIndicator: React.FC<AttitudeIndicatorProps> = ({ pitch, roll }) =>
   };
 
   const generateBankMarkings = () => {
-    const markings = [];
+    const markings: JSX.Element[] = [];
     const angles = [-60, -45, -30, -20, -10, 0, 10, 20, 30, 45, 60];
     
     angles.forEach((angle) => {

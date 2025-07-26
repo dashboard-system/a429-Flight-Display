@@ -13,21 +13,13 @@ npm install a429-flight-display
 ### Basic Usage
 
 ```tsx
-import { AircraftPFD, FlightData } from 'a429-flight-display';
+import { AircraftPFD, useA429ValuesSimulator, defaultFlightData } from 'a429-flight-display';
 import 'a429-flight-display/style.css';
 
-const flightData: FlightData = {
-  altitude: 35000,
-  airspeed: 250,
-  mach: 0.78,
-  heading: 90,
-  verticalSpeed: 1500,
-  pitch: 5,
-  roll: -2,
-  temperature: -45
-};
-
 function App() {
+  // Use the enhanced flight data simulator with realistic ARINC 429 parameters
+  const flightData = useA429ValuesSimulator(defaultFlightData);
+  
   return <AircraftPFD flightData={flightData} />;
 }
 ```
@@ -46,13 +38,15 @@ import {
 import 'a429-flight-display/style.css';
 
 function CustomPFD() {
+  const flightData = useA429ValuesSimulator(defaultFlightData);
+  
   return (
     <div>
-      <AttitudeIndicator pitch={5} roll={-2} />
-      <AirspeedIndicator airspeed={250} />
-      <AltitudeIndicator altitude={35000} />
-      <HeadingIndicator heading={90} />
-      <VerticalSpeedIndicator verticalSpeed={1500} />
+      <AttitudeIndicator pitch={flightData.pitch_angle} roll={flightData.roll_angle} />
+      <AirspeedIndicator airspeed={flightData.airspeed} />
+      <AltitudeIndicator altitude={flightData.altitude} />
+      <HeadingIndicator heading={flightData.true_heading} />
+      <VerticalSpeedIndicator verticalSpeed={flightData.vertical_speed} />
       <ARINC429DataBus flightData={flightData} />
     </div>
   );

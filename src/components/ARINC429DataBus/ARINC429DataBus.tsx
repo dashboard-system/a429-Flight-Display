@@ -12,10 +12,10 @@ const ARINC429DataBus: React.FC<ARINC429DataBusProps> = ({ flightData }) => {
       new ARINC429Word(ARINC429_LABELS.ALTITUDE, 0, Math.round(flightData.altitude), SSM.NORMAL_OPERATION),
       new ARINC429Word(ARINC429_LABELS.AIRSPEED, 0, Math.round(flightData.airspeed), SSM.NORMAL_OPERATION),
       new ARINC429Word(ARINC429_LABELS.MACH, 0, Math.round(flightData.mach * 100000), SSM.NORMAL_OPERATION),
-      new ARINC429Word(ARINC429_LABELS.HEADING, 0, Math.round(flightData.heading), SSM.NORMAL_OPERATION),
-      new ARINC429Word(ARINC429_LABELS.VERTICAL_SPEED, 0, Math.round(flightData.verticalSpeed), SSM.NORMAL_OPERATION),
-      new ARINC429Word(ARINC429_LABELS.PITCH, 0, Math.round(flightData.pitch * 100), SSM.NORMAL_OPERATION),
-      new ARINC429Word(ARINC429_LABELS.ROLL, 0, Math.round(flightData.roll * 100), SSM.NORMAL_OPERATION),
+      new ARINC429Word(ARINC429_LABELS.HEADING, 0, Math.round(flightData.true_heading), SSM.NORMAL_OPERATION),
+      new ARINC429Word(ARINC429_LABELS.VERTICAL_SPEED, 0, Math.round(flightData.vertical_speed), SSM.NORMAL_OPERATION),
+      new ARINC429Word(ARINC429_LABELS.PITCH, 0, Math.round(flightData.pitch_angle * 100), SSM.NORMAL_OPERATION),
+      new ARINC429Word(ARINC429_LABELS.ROLL, 0, Math.round(flightData.roll_angle * 100), SSM.NORMAL_OPERATION),
     ];
   };
 
