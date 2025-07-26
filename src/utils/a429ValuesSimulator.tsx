@@ -129,6 +129,7 @@ export const useA429ValuesSimulator = (initialData: FlightData) => {
         const windVariation = (Math.random() - 0.5) * 1.5 * turbulenceIntensity;
         const tempVariation = (Math.random() - 0.5) * 0.5;
     
+        
         // Engine parameter correlations (optimized for cruise stability)
         const targetN1 = phaseParams.powerSetting * 100;
         const n1Change = (targetN1 - prev.n1_rpm) * 0.02 + (Math.random() - 0.5) * 0.3 * turbulenceIntensity;
