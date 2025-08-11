@@ -2,8 +2,8 @@ import { useState, useEffect } from "react";
 import { FlightData } from "../types";
 import { ARINC429Word, ARINC429_LABELS, ARINC429RawData, encodeA429Value } from "../types/arinc429";
 
-export const useA429ValuesSimulator = (initialData: FlightData) => {
-  const [flightData, setFlightData] = useState<FlightData>(initialData);
+export const useA429ValuesSimulator = (initialData?: FlightData) => {
+  const [flightData, setFlightData] = useState<FlightData>(initialData || defaultFlightData);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -314,9 +314,9 @@ export function convertFromA429RawData(rawData: ARINC429RawData): Partial<Flight
 }
 
 // Raw ARINC 429 Data Simulator Hook
-export const useA429RawDataSimulator = (initialFlightData: FlightData) => {
+export const useA429RawDataSimulator = (initialFlightData?: FlightData) => {
   const [rawData, setRawData] = useState<ARINC429RawData>(() => 
-    convertToA429RawData(initialFlightData)
+    convertToA429RawData(initialFlightData || defaultFlightData)
   );
   const flightData = useA429ValuesSimulator(initialFlightData);
 

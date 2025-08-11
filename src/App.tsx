@@ -1,8 +1,8 @@
 import Example from "./Example";
-import { useA429ValuesSimulator, defaultFlightData } from "./utils/a429ValuesSimulator";
+import { useA429ValuesSimulator } from "./utils/a429ValuesSimulator";
 
 function App() {
-  const flightData = useA429ValuesSimulator(defaultFlightData);
+  const flightData = useA429ValuesSimulator();
 
   return <Example flightData={flightData} />;
 }
