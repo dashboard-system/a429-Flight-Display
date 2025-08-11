@@ -1,6 +1,6 @@
 {
   "name": "a429-flight-display",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "React components for ARINC 429 Flight Display with primary flight instruments",
   "keywords": [
     "react",

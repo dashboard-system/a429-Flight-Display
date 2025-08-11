@@ -5,6 +5,7 @@ export { default as AirspeedIndicator } from '../components/AirspeedIndicator/Ai
 export { default as AltitudeIndicator } from '../components/AltitudeIndicator/AltitudeIndicator';
 export { default as HeadingIndicator } from '../components/HeadingIndicator/HeadingIndicator';
 export { default as VerticalSpeedIndicator } from '../components/VerticalSpeedIndicator/VerticalSpeedIndicator';
+export { default as FlightTracking } from '../components/FlightTracking/FlightTracking';
 export { default as ARINC429DataBus } from '../components/ARINC429DataBus/ARINC429DataBus';
 
 // Export types
