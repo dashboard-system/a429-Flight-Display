@@ -2,6 +2,16 @@
 
 React components for building primary flight displays (PFD) with ARINC 429 data visualization and raw data conversion utilities.
 
+## Screenshots
+
+### Primary Flight Display
+![Flight Display](screenshots/flight-display.png)
+*Complete PFD with attitude, airspeed, altitude, heading, and vertical speed indicators*
+
+### Flight Tracking
+![Flight Tracking](screenshots/flight-tracking.png)  
+*Real-time flight tracking with Google Maps integration*
+
 ## Installation
 
 ```bash
@@ -81,7 +91,8 @@ import {
   AltitudeIndicator,
   HeadingIndicator,
   VerticalSpeedIndicator,
-  ARINC429DataBus 
+  ARINC429DataBus,
+  FlightTracking
 } from 'a429-flight-display';
 import 'a429-flight-display/style.css';
 
@@ -95,6 +106,7 @@ function CustomPFD() {
       <AltitudeIndicator altitude={flightData.altitude} />
       <HeadingIndicator heading={flightData.true_heading} />
       <VerticalSpeedIndicator verticalSpeed={flightData.vertical_speed} />
+      <FlightTracking flightData={flightData} apiKey="your-google-maps-api-key" />
       <ARINC429DataBus flightData={flightData} />
     </div>
   );
@@ -104,11 +116,13 @@ function CustomPFD() {
 ## Components
 
 - **AircraftPFD** - Complete primary flight display
+- **FlightDisplay** - Main flight instruments display
 - **AttitudeIndicator** - Artificial horizon with pitch/roll
 - **AirspeedIndicator** - Airspeed tape display
 - **AltitudeIndicator** - Altitude tape display  
 - **HeadingIndicator** - Heading compass display
 - **VerticalSpeedIndicator** - Vertical speed indicator
+- **FlightTracking** - Real-time flight tracking with map integration
 - **ARINC429DataBus** - Live ARINC 429 data visualization
 
 ## ARINC 429 Features
