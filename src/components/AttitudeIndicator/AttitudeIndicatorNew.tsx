@@ -1,10 +1,6 @@
 import React from 'react';
 import { JSX } from 'react/jsx-runtime';
-
-interface AttitudeIndicatorProps {
-  pitch: number;
-  roll: number;
-}
+import { AttitudeIndicatorProps } from "../../types";
 
 const AttitudeIndicator: React.FC<AttitudeIndicatorProps> = ({ pitch, roll }) => {
   const pixelsPerDegree = 3;

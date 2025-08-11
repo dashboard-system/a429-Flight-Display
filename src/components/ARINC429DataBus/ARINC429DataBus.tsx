@@ -1,9 +1,5 @@
 import React from 'react';
-import { FlightData, ARINC429Word, ARINC429_LABELS, SSM } from '../../types';
-
-interface ARINC429DataBusProps {
-  flightData: FlightData;
-}
+import { FlightData, ARINC429Word, ARINC429_LABELS, SSM, ARINC429DataBusProps } from '../../types';
 
 const ARINC429DataBus: React.FC<ARINC429DataBusProps> = ({ flightData }) => {
   // Generate ARINC 429 words from current data

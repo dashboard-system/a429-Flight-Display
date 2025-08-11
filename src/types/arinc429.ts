@@ -39,7 +39,3 @@ export const ARINC429_LABELS = {
 export const SSM = {
   NORMAL_OPERATION: 0b11
 } as const;
-
-export interface ARINC429DataBusProps {
-  flightData: import('./flight').FlightData;
-}

@@ -1,8 +1,5 @@
 import React from "react";
-
-interface AirspeedIndicatorProps {
-  airspeed: number;
-}
+import { AirspeedIndicatorProps } from "../../types";
 
 const AirspeedIndicator: React.FC<AirspeedIndicatorProps> = ({ airspeed }) => {
   // Generate speed marks around current airspeed with better range

@@ -1,9 +1,6 @@
 import React from 'react';
 import VerticalTape from '../shared/VerticalTape';
-
-interface AltitudeIndicatorProps {
-  altitude: number;
-}
+import { AltitudeIndicatorProps } from "../../types";
 
 const AltitudeIndicator: React.FC<AltitudeIndicatorProps> = ({ altitude }) => {
   // Generate altitude marks around current altitude

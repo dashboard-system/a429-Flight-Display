@@ -1,8 +1,5 @@
 import React from "react";
-
-interface VerticalSpeedIndicatorProps {
-  verticalSpeed: number;
-}
+import { VerticalSpeedIndicatorProps } from "../../types";
 
 const VerticalSpeedIndicator: React.FC<VerticalSpeedIndicatorProps> = ({ verticalSpeed }) => {
   const generateScaleMarks = () => {

@@ -1,8 +1,5 @@
 import React from 'react';
-
-interface HeadingIndicatorProps {
-  heading: number;
-}
+import { HeadingIndicatorProps } from "../../types";
 
 const HeadingIndicator: React.FC<HeadingIndicatorProps> = ({ heading }) => {
   const generateMarkings = () => {

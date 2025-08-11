@@ -1,11 +1,8 @@
 import React from "react";
 import VerticalTape from '../shared/VerticalTape';
+import { AirspeedIndicatorProps, SpeedColorRange, AirspeedIndicatorOptions } from '../../types';
 
-interface AirspeedIndicatorProps {
-  airspeed: number;
-}
-
-const AirspeedIndicator: React.FC<AirspeedIndicatorProps> = ({ airspeed }) => {
+const AirspeedIndicator: React.FC<AirspeedIndicatorProps> = ({ airspeed, options }) => {
   // Generate speed marks around current airspeed
   const generateSpeedMarks = (currentSpeed: number) => {
     const marks = [];
@@ -25,10 +22,21 @@ const AirspeedIndicator: React.FC<AirspeedIndicatorProps> = ({ airspeed }) => {
   };
 
   const getSpeedColor = (speed: number) => {
-    if (speed >= 40 && speed <= 100) return "text-white"; // White arc (normal operations)
-    if (speed >= 100 && speed <= 180) return "text-green-400"; // Green arc (normal operations)
-    if (speed >= 180 && speed <= 220) return "text-yellow-400"; // Caution range
-    if (speed > 220) return "text-red-400"; // Never exceed
+    const defaultRanges: SpeedColorRange[] = [
+      { min: 40, max: 100, color: "text-white" },
+      { min: 100, max: 180, color: "text-green-400" },
+      { min: 180, max: 220, color: "text-yellow-400" },
+      { min: 220, max: Infinity, color: "text-red-400" }
+    ];
+
+    const ranges = options?.speedColorRanges || defaultRanges;
+    
+    for (const range of ranges) {
+      if (speed >= range.min && speed <= range.max) {
+        return range.color;
+      }
+    }
+    
     return "text-gray-400";
   };
 

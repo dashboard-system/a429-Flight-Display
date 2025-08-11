@@ -1,71 +1,5 @@
 import { useState, useEffect } from "react";
-
-// Enhanced FlightData interface based on ARINC 429 parameters
-export interface FlightData {
-  // Primary Flight Data (ARINC 429 Labels 203-326)
-  airspeed: number;              // Label 210 - True Airspeed (knots)
-  altitude: number;              // Label 203 - Barometric Altitude (feet)
-  groundspeed: number;           // Label 312 - Ground Speed (knots)
-  mach: number;                  // Calculated Mach number
-  
-  // Attitude & Heading (AHRS Labels 320-326)
-  pitch_angle: number;           // Label 326 - Pitch Angle (degrees)
-  roll_angle: number;            // Label 325 - Roll Angle (degrees)
-  true_heading: number;          // Label 324 - True Heading (degrees)
-  magnetic_heading: number;      // Label 320 - Magnetic Heading (degrees)
-  
-  // Flight Dynamics
-  pitch_rate: number;            // Pitch rate (degrees/second)
-  roll_rate: number;             // Roll rate (degrees/second)
-  true_heading_rate: number;     // Heading rate (degrees/second)
-  vertical_speed: number;        // Label 212 - Altitude Rate (feet/minute)
-  true_track_angle: number;      // Label 313 - Track Angle True (degrees)
-  
-  // Accelerations (Body Frame)
-  body_lateral_accel: number;    // Lateral acceleration (g-force)
-  body_long_accel: number;       // Longitudinal acceleration (g-force)
-  body_normal_accel: number;     // Normal acceleration (g-force)
-  
-  // Navigation (GPS Labels 310-313)
-  latitude: number;              // Label 310 - Present Position Latitude (degrees)
-  longitude: number;             // Label 311 - Present Position Longitude (degrees)
-  
-  // Environmental Data (Labels 211-217)
-  total_air_temperature: number; // Label 211 - Total Air Temperature (°C)
-  static_air_temperature: number; // Label 215 - Static Air Temperature (°C)
-  wind_speed: number;            // Label 366 - Wind Speed (knots)
-  wind_direction: number;        // Label 367 - Wind Direction True (degrees)
-  static_pressure: number;       // Label 216 - Static Pressure (millibars)
-  
-  // Engine Parameters (Labels 300-306)
-  n1_rpm: number;                // Label 301 - N1 Fan Speed (% RPM)
-  n2_rpm: number;                // Label 302 - N2 Core Speed (% RPM)
-  egt: number;                   // Label 300 - Exhaust Gas Temperature (°C)
-  fuel_flow: number;             // Label 303 - Fuel Flow (lbs/hr)
-  oil_pressure: number;          // Label 304 - Oil Pressure (PSI)
-  oil_temperature: number;       // Label 305 - Oil Temperature (°C)
-  
-  // Aircraft Configuration
-  flap_position: number;         // Label 103 - Flap Position (degrees)
-  gear_position: boolean;        // Label 102 - Landing Gear Position
-  
-  // System Status
-  cabin_altitude: number;        // Label 350 - Cabin Altitude (feet)
-  cabin_pressure_diff: number;   // Label 351 - Cabin Differential Pressure (PSI)
-  
-  // Navigation Aids
-  ils_deviation: number;         // Label 173 - Localizer Deviation (dots)
-  glideslope_deviation: number;  // Label 174 - Glideslope Deviation (dots)
-  dme_distance: number;          // Label 202 - DME Distance (nautical miles)
-  
-  // Time & Date
-  date: string;                  // Label 260 - Date (DD/MM/YYYY)
-  time: string;                  // Time (HH:MM:SS)
-  timestamp: Date;               // JavaScript timestamp
-  
-  // Flight Phase
-  flight_phase: 'GROUND' | 'TAKEOFF' | 'CLIMB' | 'CRUISE' | 'DESCENT' | 'APPROACH' | 'LANDING';
-}
+import { FlightData } from "../types";
 
 export const useA429ValuesSimulator = (initialData: FlightData) => {
   const [flightData, setFlightData] = useState<FlightData>(initialData);
@@ -159,8 +93,27 @@ export const useA429ValuesSimulator = (initialData: FlightData) => {
             prev.pitch_angle + prev.pitch_rate * 0.02 + (Math.random() - 0.5) * 0.5)),
           roll_angle: Math.max(-45, Math.min(45, 
             prev.roll_angle + prev.roll_rate * 0.02 + (Math.random() - 0.5) * 0.8)),
-          true_heading: (prev.true_heading + prev.true_heading_rate * 0.02 + (Math.random() - 0.5) * 0.3 + 360) % 360,
-          magnetic_heading: (prev.true_heading - 8.5 + 360) % 360, // Magnetic variation
+          true_heading: (() => {
+            // Calculate desired heading to Vancouver
+            const vancouverLat = 49.2827;
+            const vancouverLng = -123.1207;
+            const dLng = (vancouverLng - prev.longitude) * Math.PI / 180;
+            const lat1 = prev.latitude * Math.PI / 180;
+            const lat2 = vancouverLat * Math.PI / 180;
+            
+            const y = Math.sin(dLng) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+            const desiredHeading = (Math.atan2(y, x) * 180 / Math.PI + 360) % 360;
+            
+            // Gradually adjust heading towards Vancouver (1 degree per update max)
+            let headingDiff = desiredHeading - prev.true_heading;
+            if (headingDiff > 180) headingDiff -= 360;
+            if (headingDiff < -180) headingDiff += 360;
+            
+            const headingAdjustment = Math.max(-1, Math.min(1, headingDiff * 0.1));
+            return (prev.true_heading + headingAdjustment + prev.true_heading_rate * 0.02 + (Math.random() - 0.5) * 0.2 + 360) % 360;
+          })(),
+          magnetic_heading: (prev.true_heading - 12 + 360) % 360, // Magnetic variation for Western Canada
           
           // Flight Dynamics
           pitch_rate: Math.max(-10, Math.min(10, (Math.random() - 0.5) * 2)),
@@ -175,9 +128,32 @@ export const useA429ValuesSimulator = (initialData: FlightData) => {
           body_long_accel: Math.max(-1, Math.min(1, (newN1 - prev.n1_rpm) * 0.01 + (Math.random() - 0.5) * 0.05)),
           body_normal_accel: Math.max(-1, Math.min(3, 1 + prev.pitch_angle * 0.015 + (Math.random() - 0.5) * 0.08)),
           
-          // Navigation (realistic cruise navigation with small drift)
-          latitude: prev.latitude + (prev.groundspeed * Math.cos(prev.true_track_angle * Math.PI / 180)) / 364000 * 0.9,
-          longitude: prev.longitude + (prev.groundspeed * Math.sin(prev.true_track_angle * Math.PI / 180)) / (364000 * Math.cos(prev.latitude * Math.PI / 180)) * 0.9,
+          // Navigation (realistic cruise navigation towards Vancouver)
+          // Vancouver coordinates: 49.2827, -123.1207
+          // Calculate distance and bearing to Vancouver
+          latitude: (() => {
+            const vancouverLat = 49.2827;
+            const vancouverLng = -123.1207;
+            const currentLat = prev.latitude;
+            const currentLng = prev.longitude;
+            
+            // Calculate bearing to Vancouver
+            const dLng = (vancouverLng - currentLng) * Math.PI / 180;
+            const lat1 = currentLat * Math.PI / 180;
+            const lat2 = vancouverLat * Math.PI / 180;
+            
+            const y = Math.sin(dLng) * Math.cos(lat2);
+            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
+            const bearing = Math.atan2(y, x) * 180 / Math.PI;
+            
+            // Use actual track angle with slight navigation drift
+            const trackRadians = prev.true_track_angle * Math.PI / 180;
+            return prev.latitude + (prev.groundspeed * Math.cos(trackRadians)) / 364000;
+          })(),
+          longitude: (() => {
+            const trackRadians = prev.true_track_angle * Math.PI / 180;
+            return prev.longitude + (prev.groundspeed * Math.sin(trackRadians)) / (364000 * Math.cos(prev.latitude * Math.PI / 180));
+          })(),
           
           // Environmental Data (high altitude conditions)
           total_air_temperature: Math.max(-70, Math.min(50, 
@@ -205,10 +181,22 @@ export const useA429ValuesSimulator = (initialData: FlightData) => {
           cabin_altitude: Math.min(8000, Math.max(0, prev.altitude * 0.2 + 6000 + (Math.random() - 0.5) * 50)),
           cabin_pressure_diff: Math.max(0, Math.min(9.5, (prev.altitude - 6000) / 5000 * 8 + (Math.random() - 0.5) * 0.05)),
           
-          // Navigation Aids (simulate approach scenario)
+          // Navigation Aids (Vancouver destination)
           ils_deviation: phase === 'APPROACH' ? (Math.random() - 0.5) * 1.5 : 0,
           glideslope_deviation: phase === 'APPROACH' ? (Math.random() - 0.5) * 1.2 : 0,
-          dme_distance: Math.max(0, prev.dme_distance - prev.groundspeed / 3600 + (Math.random() - 0.5) * 0.1),
+          dme_distance: (() => {
+            // Calculate actual distance to Vancouver
+            const vancouverLat = 49.2827;
+            const vancouverLng = -123.1207;
+            const R = 3440.065; // Earth's radius in nautical miles
+            const dLat = (vancouverLat - prev.latitude) * Math.PI / 180;
+            const dLng = (vancouverLng - prev.longitude) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+                     Math.cos(prev.latitude * Math.PI / 180) * Math.cos(vancouverLat * Math.PI / 180) * 
+                     Math.sin(dLng/2) * Math.sin(dLng/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return Math.max(0, R * c);
+          })(),
           
           // Time & Date
           date: now.toLocaleDateString('en-GB'),
@@ -219,7 +207,7 @@ export const useA429ValuesSimulator = (initialData: FlightData) => {
           flight_phase: phase,
         };
       });
-    }, 1000); // Update at 1 Hz (can be increased for higher fidelity)
+    }, 2000); // Update every 2 seconds for visible movement
 
     return () => clearInterval(interval);
   }, []);
@@ -238,24 +226,24 @@ export const defaultFlightData: FlightData = {
   // Stable cruise attitude
   pitch_angle: 2.5,           // Slight nose-up attitude in cruise
   roll_angle: -1.2,           // Minor bank correction
-  true_heading: 95,          // Eastbound heading
-  magnetic_heading: 87,      // Accounting for magnetic variation
+  true_heading: 285,          // Westbound heading to Vancouver
+  magnetic_heading: 277,      // Accounting for magnetic variation
   
   // Minimal rates in stable cruise
   pitch_rate: 0.1,
   roll_rate: -0.2,
   true_heading_rate: 0.05,
   vertical_speed: 50,         // Slight climb (step climb scenario)
-  true_track_angle: 97,      // Slightly different from heading due to wind
+  true_track_angle: 287,      // Slightly different from heading due to wind
   
   // Cruise flight accelerations
   body_lateral_accel: -0.02,  // Minimal lateral G
   body_long_accel: 0.01,      // Slight acceleration
   body_normal_accel: 1.01,    // Just over 1G in level flight
   
-  // Position over North Atlantic
-  latitude: 51.2847,          // Over Atlantic (London-NYC route)
-  longitude: -25.4558,
+  // Position over Ontario, Canada
+  latitude: 43.6532,          // Toronto, Ontario area
+  longitude: -79.3832,
   
   // High altitude environment
   total_air_temperature: -54, // ISA at FL350
@@ -280,10 +268,10 @@ export const defaultFlightData: FlightData = {
   cabin_altitude: 6800,       // Typical cruise cabin altitude
   cabin_pressure_diff: 8.1,   // Differential pressure (PSI)
   
-  // Navigation aids (not in use during cruise)
+  // Navigation aids (Vancouver destination)
   ils_deviation: 0,
   glideslope_deviation: 0,
-  dme_distance: 0,            // No DME selected
+  dme_distance: 2200,         // Distance to Vancouver in nautical miles
   
   // Current date/time
   date: new Date().toLocaleDateString('en-GB'),

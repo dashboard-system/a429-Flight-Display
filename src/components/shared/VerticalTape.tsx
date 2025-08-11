@@ -1,19 +1,5 @@
 import React from 'react';
-
-export interface VerticalTapeProps {
-  value: number;
-  title: string;
-  unit: string;
-  unitTooltip?: string;
-  generateMarks: (currentValue: number) => number[];
-  getValueColor?: (value: number) => string;
-  isMajorTick?: (value: number) => boolean;
-  formatValue?: (value: number) => string;
-  formatCurrentValue?: (value: number) => string;
-  pixelsPerUnit?: number;
-  pointerSide?: 'left' | 'right';
-  className?: string;
-}
+import { VerticalTapeProps } from '../../types';
 
 const VerticalTape: React.FC<VerticalTapeProps> = ({
   value,
