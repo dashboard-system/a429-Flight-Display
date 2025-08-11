@@ -5,11 +5,11 @@ React components for building primary flight displays (PFD) with ARINC 429 data 
 ## Screenshots
 
 ### Primary Flight Display
-![Flight Display](screenshots/flight-display.png)
+![Flight Display](https://github.com/dashboard-system/a429-Flight-Display/blob/main/screenshots/flight_display.png)
 *Complete PFD with attitude, airspeed, altitude, heading, and vertical speed indicators*
 
 ### Flight Tracking
-![Flight Tracking](screenshots/flight-tracking.png)  
+![Flight Tracking](https://github.com/dashboard-system/a429-Flight-Display/blob/main/screenshots/flight_tracking.png)  
 *Real-time flight tracking with Google Maps integration*
 
 ## Installation
