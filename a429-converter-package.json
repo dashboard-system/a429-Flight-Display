@@ -1,0 +1,40 @@
+{
+  "name": "a429-data-converter",
+  "version": "1.0.0",
+  "description": "Standalone ARINC 429 data conversion utility for aviation applications",
+  "keywords": [
+    "arinc429",
+    "aviation",
+    "flight",
+    "data",
+    "converter",
+    "aerospace"
+  ],
+  "main": "dist/a429Converter.js",
+  "module": "dist/a429Converter.es.js",
+  "types": "dist/a429Converter.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "import": "./dist/a429Converter.es.js",
+      "require": "./dist/a429Converter.js",
+      "types": "./dist/a429Converter.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc src/utils/a429Converter.ts --outDir dist --declaration",
+    "prepublishOnly": "npm run build"
+  },
+  "license": "ISC",
+  "author": "Haorong Li",
+  "homepage": "https://github.com/dashboard-system/a429-Flight-Display#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dashboard-system/a429-Flight-Display.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dashboard-system/a429-Flight-Display/issues"
+  }
+}

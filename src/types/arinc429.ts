@@ -39,3 +39,14 @@ export const ARINC429_LABELS = {
 export const SSM = {
   NORMAL_OPERATION: 0b11
 } as const;
+
+// Raw ARINC 429 Data type
+export interface ARINC429RawData {
+  [key: string]: ARINC429Word;
+}
+
+// Utility function to encode value into ARINC 429 format
+export function encodeA429Value(value: number, scale: number = 1, label: number, sdi: number = 0): ARINC429Word {
+  const encodedValue = Math.round(value * scale) & 0x7FFFF; // 19-bit data field
+  return new ARINC429Word(label, sdi, encodedValue, SSM.NORMAL_OPERATION);
+}

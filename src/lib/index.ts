@@ -10,5 +10,25 @@ export { default as ARINC429DataBus } from '../components/ARINC429DataBus/ARINC4
 // Export types
 export * from '../types';
 
+// Export utilities
+export { 
+  useA429ValuesSimulator, 
+  useA429RawDataSimulator,
+  convertToA429RawData,
+  convertFromA429RawData,
+  defaultFlightData 
+} from '../utils/a429ValuesSimulator';
+
+// Export standalone converter utilities (avoiding conflicts with types)
+export type { FlightParameters } from '../utils/a429Converter';
+export { 
+  convertToA429RawData as convertFlightParamsToA429,
+  convertFromA429RawData as convertA429ToFlightParams,
+  rawDataToWords,
+  wordsToRawData,
+  validateA429Word,
+  getLabelName
+} from '../utils/a429Converter';
+
 // Export styles
 import '../style.css';
