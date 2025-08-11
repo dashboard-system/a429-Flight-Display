@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import ARINC429DataBus from "./components/ARINC429DataBus/ARINC429DataBus";
 import FlightDisplay from "./components/FlightDisplay";
 import FlightTracking from "./components/FlightTracking/FlightTracking";

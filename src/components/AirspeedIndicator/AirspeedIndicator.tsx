@@ -1,6 +1,6 @@
 import React from "react";
 import VerticalTape from '../shared/VerticalTape';
-import { AirspeedIndicatorProps, SpeedColorRange, AirspeedIndicatorOptions } from '../../types';
+import { AirspeedIndicatorProps, SpeedColorRange } from '../../types';
 
 const AirspeedIndicator: React.FC<AirspeedIndicatorProps> = ({ airspeed, options }) => {
   // Generate speed marks around current airspeed

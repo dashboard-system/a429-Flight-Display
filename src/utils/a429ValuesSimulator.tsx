@@ -133,20 +133,6 @@ export const useA429ValuesSimulator = (initialData?: FlightData) => {
           // Vancouver coordinates: 49.2827, -123.1207
           // Calculate distance and bearing to Vancouver
           latitude: (() => {
-            const vancouverLat = 49.2827;
-            const vancouverLng = -123.1207;
-            const currentLat = prev.latitude;
-            const currentLng = prev.longitude;
-            
-            // Calculate bearing to Vancouver
-            const dLng = (vancouverLng - currentLng) * Math.PI / 180;
-            const lat1 = currentLat * Math.PI / 180;
-            const lat2 = vancouverLat * Math.PI / 180;
-            
-            const y = Math.sin(dLng) * Math.cos(lat2);
-            const x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLng);
-            const bearing = Math.atan2(y, x) * 180 / Math.PI;
-            
             // Use actual track angle with slight navigation drift
             const trackRadians = prev.true_track_angle * Math.PI / 180;
             return prev.latitude + (prev.groundspeed * Math.cos(trackRadians)) / 364000;
