@@ -61,7 +61,7 @@ const AircraftPFD = ({ flightData }: { flightData: FlightData }) => {
         {activeTab === 'flight-tracking' && (
           <div>
             {/* Flight Tracking Display */}
-            <FlightTracking flightData={flightData} apiKey="AIzaSyBHbNbhkvRhsWHMTfZzL-zXSMduhLPpN7w"/>
+            <FlightTracking flightData={flightData} apiKey={import.meta.env.VITE_GOOGLE_MAP_API_KEY || ""}/>
           </div>
         )}
       </div>
