@@ -61,7 +61,7 @@ const AircraftPFD = ({ flightData }: { flightData: FlightData }) => {
         {activeTab === 'flight-tracking' && (
           <div>
             {/* Flight Tracking Display */}
-            <FlightTracking flightData={flightData} apiKey="AIzaSyC1NON_9qpto6k0JaptLjTsxFQO_KYMPks"/>
+            <FlightTracking flightData={flightData} apiKey="AIzaSyBHbNbhkvRhsWHMTfZzL-zXSMduhLPpN7w"/>
           </div>
         )}
       </div>
